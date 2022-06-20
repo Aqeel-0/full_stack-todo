@@ -1,3 +1,4 @@
+import axios from 'axios'
 import {useState, useEffect} from 'react'
 
 
@@ -8,18 +9,22 @@ export default function Form({todoinput, setTodoinput, todolist, setTodolist, se
         setTodoinput(e.target.value)
     }
 
-    const submitHandler = (e)=>{
+    const submitHandler = async (e)=>{
         e.preventDefault()
-        if(todoinput == '') alert("Input can't be empty")
+        if(todoinput === '') alert("Input can't be empty")
         else{
             const newobj = {
                 text: todoinput,
-                completed: false,
-                id: Math.floor(Math.random()*1000)
+                completed: false
             }
-            setTodolist(prevArr => ([...prevArr, newobj]))
-            setRenderlist(prevArr => ([...prevArr, newobj]))
+            await axios.post('http://localhost:5000/posts', newobj)
+            axios.get('http://localhost:5000/posts')
+            .then(data => {
+                setRenderlist(data.data)
+                setTodolist(data.data)
+            })
             setTodoinput("")
+           
         }
     }
     
